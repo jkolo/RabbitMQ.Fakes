@@ -3,7 +3,7 @@ RabbitMQ.Fakes is a library that contains fake implementations of the RabbitMQ.C
 
 # Requirements
 * .NET 4.5
-* Nuget Package Manger
+* Nuget Package Manager
 
 # Projects
 * __RabbitMQ.Fakes:__ Implementation of the fakes

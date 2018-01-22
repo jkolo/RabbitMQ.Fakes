@@ -118,6 +118,18 @@ namespace RabbitMQ.Fakes
             remove { throw new NotImplementedException(); }
         }
 
+        public event EventHandler<EventArgs> RecoverySucceeded
+        {
+            add { throw new NotImplementedException(); }
+            remove { throw new NotImplementedException(); }
+        }
+
+        public event EventHandler<ConnectionRecoveryErrorEventArgs> ConnectionRecoveryError
+        {
+            add { throw new NotImplementedException(); }
+            remove { throw new NotImplementedException(); }
+        }
+
         public event EventHandler<ConnectionBlockedEventArgs> ConnectionBlocked;
         event EventHandler<ShutdownEventArgs> IConnection.ConnectionShutdown
         {

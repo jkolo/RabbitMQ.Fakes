@@ -10,7 +10,7 @@
     <tags>RabbitMQ Fake Fakes AMQP</tags>
 
     <dependencies>
-      <dependency id="RabbitMQ.Client" version="3.0.4" />
+      <dependency id="RabbitMQ.Client" version="5.0.1" />
     </dependencies>
     
   </metadata>
