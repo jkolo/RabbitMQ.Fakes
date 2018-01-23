@@ -18,6 +18,7 @@ namespace RabbitMQ.Fakes
         public FakeModel(RabbitServer server)
         {
             _server = server;
+            IsOpen = true;
         }
 
         public IEnumerable<RabbitMessage> GetMessagesPublishedToExchange(string exchange)
@@ -49,7 +50,7 @@ namespace RabbitMQ.Fakes
 
         public void Dispose()
         {
-
+            Close();
         }
 
         public IBasicProperties CreateBasicProperties()
