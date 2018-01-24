@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -329,14 +330,15 @@ namespace RabbitMQ.Fakes
 
         private void NotifyConsumerWhenMessagesAreReceived(string consumerTag, IBasicConsumer consumer, Queue queueInstance)
         {
-            queueInstance.MessagePublished += (sender, message) => { NotifyConsumerOfMessage(consumerTag, consumer, message); };
+            queueInstance.MessagePublished += (sender, message) => NotifyConsumerOfExistingMessages(consumerTag, consumer, queueInstance);
         }
 
         private void NotifyConsumerOfExistingMessages(string consumerTag, IBasicConsumer consumer, Queue queueInstance)
         {
-            foreach (var message in queueInstance.Messages)
+            while (queueInstance.Messages.Any())
             {
-                NotifyConsumerOfMessage(consumerTag, consumer, message);
+                if (queueInstance.Messages.TryDequeue(out var message))
+                    NotifyConsumerOfMessage(consumerTag, consumer, message);
             }
         }
 
@@ -461,19 +463,7 @@ namespace RabbitMQ.Fakes
 
         public void BasicAck(ulong deliveryTag, bool multiple)
         {
-            RabbitMessage message;
-            _workingMessages.TryRemove(deliveryTag, out message);
-
-            if (message != null)
-            {
-                Queue queue;
-                _server.Queues.TryGetValue(message.Queue, out queue);
-
-                if (queue != null)
-                {
-                    queue.Messages.TryDequeue(out message);
-                }
-            }
+            _workingMessages.TryRemove(deliveryTag, out var _);
         }
 
         public void BasicReject(ulong deliveryTag, bool requeue)

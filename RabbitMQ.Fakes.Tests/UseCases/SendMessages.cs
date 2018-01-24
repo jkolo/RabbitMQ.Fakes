@@ -65,6 +65,31 @@ namespace RabbitMQ.Fakes.Tests.UseCases
             Assert.That(rabbitServer.Queues["some_other_queue"].Messages.Count, Is.EqualTo(1));
         }
 
+        [Test]
+        public void SendingAndGettingMultipleMessages()
+        {
+            var rabbitServer = new RabbitServer();
+            var connectionFactory = new FakeConnectionFactory(rabbitServer);
+            ConfigureQueueBinding(rabbitServer, "my_exchange", "some_queue");
+
+            using (var connection = connectionFactory.CreateConnection())
+            using (var channel = connection.CreateModel())
+            {
+                const string message = "hello world!";
+                var messageBody = Encoding.ASCII.GetBytes(message);
+                channel.BasicPublish("my_exchange", null, false, channel.CreateBasicProperties(), messageBody);
+                channel.BasicPublish("my_exchange", null, false, channel.CreateBasicProperties(), messageBody);
+                var result = channel.BasicGet("some_queue", false);
+                Assert.That(rabbitServer.Queues["some_queue"].Messages.Count, Is.EqualTo(1));
+                channel.BasicAck(result.DeliveryTag, false);
+                Assert.That(rabbitServer.Queues["some_queue"].Messages.Count, Is.EqualTo(1));
+                result = channel.BasicGet("some_queue", false);
+                Assert.That(rabbitServer.Queues["some_queue"].Messages.Count, Is.EqualTo(0));
+                channel.BasicAck(result.DeliveryTag, false);
+                Assert.That(rabbitServer.Queues["some_queue"].Messages.Count, Is.EqualTo(0));
+            }
+        }
+
         private void ConfigureQueueBinding(RabbitServer rabbitServer, string exchangeName, string queueName)
         {
             var connectionFactory = new FakeConnectionFactory(rabbitServer);
