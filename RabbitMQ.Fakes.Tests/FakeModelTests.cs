@@ -690,5 +690,16 @@ namespace RabbitMQ.Fakes.Tests
             Assert.That(response, Is.Null);
         }
 
+        [Test]
+        public void ModelReportsAsOpenUntilClosed()
+        {
+            var node = new RabbitServer();
+            var model = new FakeModel(node);
+            Assert.That(model.IsOpen, Is.True);
+
+            model.Close();
+            Assert.That(model.IsOpen, Is.False);
+        }
+
     }
 }

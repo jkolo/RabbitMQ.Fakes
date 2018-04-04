@@ -181,5 +181,15 @@ namespace RabbitMQ.Fakes.Tests
             Assert.IsTrue(connection.Models.All(m => m.IsOpen == false));
             Assert.IsTrue(connection.Models.All(m => m.IsClosed == true));
         }
+
+        [Test]
+        public void ReportsAsOpenUntilClosed()
+        {
+            var connection = new FakeConnection(new RabbitServer());
+            Assert.That(connection.IsOpen, Is.True);
+
+            connection.Close();
+            Assert.That(connection.IsOpen, Is.False);
+        }
     }
 }
