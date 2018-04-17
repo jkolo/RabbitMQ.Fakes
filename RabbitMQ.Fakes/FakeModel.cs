@@ -355,7 +355,10 @@ namespace RabbitMQ.Fakes
             Func<ulong, RabbitMessage, RabbitMessage> updateFunction = (key, existingMessage) => existingMessage;
             _workingMessages.AddOrUpdate(deliveryTag, message, updateFunction);
 
-            consumer.HandleBasicDeliver(consumerTag, deliveryTag, redelivered, exchange, routingKey, basicProperties, body);
+            if (consumer is IAsyncBasicConsumer asyncBasicConsumer)
+                asyncBasicConsumer.HandleBasicDeliver(consumerTag, deliveryTag, redelivered, exchange, routingKey, basicProperties, body).Wait();
+            else
+                consumer.HandleBasicDeliver(consumerTag, deliveryTag, redelivered, exchange, routingKey, basicProperties, body);
         }
 
         public void BasicCancel(string consumerTag)
@@ -363,8 +366,10 @@ namespace RabbitMQ.Fakes
             IBasicConsumer consumer;
             _consumers.TryRemove(consumerTag, out consumer);
 
-            if (consumer != null)
-                consumer.HandleBasicCancelOk(consumerTag);
+            if (consumer is IAsyncBasicConsumer asyncBasicConsumer)
+                asyncBasicConsumer.HandleBasicCancelOk(consumerTag).Wait();
+            else
+                consumer?.HandleBasicCancelOk(consumerTag);
         }
 
         private long _lastDeliveryTag;
