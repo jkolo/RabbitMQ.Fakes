@@ -16,6 +16,7 @@ namespace RabbitMQ.Fakes
         {
             _server = server;
             Models = new List<FakeModel>();
+            IsOpen = true;
         }
 
         public List<FakeModel> Models { get; private set; }
@@ -30,7 +31,7 @@ namespace RabbitMQ.Fakes
 
         public void Dispose()
         {
-            
+            Close();
         }
 
         public IModel CreateModel()
@@ -113,6 +114,18 @@ namespace RabbitMQ.Fakes
         public string ClientProvidedName { get; }
         public ConsumerWorkService ConsumerWorkService { get; }
         event EventHandler<CallbackExceptionEventArgs> IConnection.CallbackException
+        {
+            add { throw new NotImplementedException(); }
+            remove { throw new NotImplementedException(); }
+        }
+
+        public event EventHandler<EventArgs> RecoverySucceeded
+        {
+            add { throw new NotImplementedException(); }
+            remove { throw new NotImplementedException(); }
+        }
+
+        public event EventHandler<ConnectionRecoveryErrorEventArgs> ConnectionRecoveryError
         {
             add { throw new NotImplementedException(); }
             remove { throw new NotImplementedException(); }
