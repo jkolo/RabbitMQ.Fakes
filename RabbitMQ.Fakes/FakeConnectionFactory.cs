@@ -12,7 +12,7 @@ namespace RabbitMQ.Fakes
 
         public FakeConnectionFactory():this(new RabbitServer())
         {
-           
+
         }
 
         public FakeConnectionFactory(RabbitServer server)
