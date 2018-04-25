@@ -27,7 +27,7 @@ namespace RabbitMQ.Fakes.Tests.UseCases
             {
                 // First message
                 var message = channel.BasicGet("my_queue", autoAck: false);
-                
+
                 Assert.That(message,Is.Not.Null);
                 var messageBody = Encoding.ASCII.GetString(message.Body);
 
@@ -82,7 +82,7 @@ namespace RabbitMQ.Fakes.Tests.UseCases
 
                 var actualBasicProperties = message.BasicProperties;
 
-                actualBasicProperties.ShouldBeEquivalentTo(basicProperties);
+                actualBasicProperties.Should().BeEquivalentTo(basicProperties);
 
                 channel.BasicAck(message.DeliveryTag, multiple: false);
             }
@@ -126,7 +126,7 @@ namespace RabbitMQ.Fakes.Tests.UseCases
             var rabbitServer = new RabbitServer();
 
             ConfigureQueueBinding(rabbitServer, "my_exchange", "my_queue");
-           
+
             var connectionFactory = new FakeConnectionFactory(rabbitServer);
             using (var connection = connectionFactory.CreateConnection())
             using (var channel = connection.CreateModel())

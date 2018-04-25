@@ -89,12 +89,12 @@ namespace RabbitMQ.Fakes
 
         public void HandleConnectionBlocked(string reason)
         {
-            
+
         }
 
         public void HandleConnectionUnblocked()
         {
-            
+
         }
 
         public AmqpTcpEndpoint Endpoint { get; set; }
