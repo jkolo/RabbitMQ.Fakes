@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -14,6 +15,8 @@ namespace RabbitMQ.Fakes
 {
     public class FakeModel : IModel
     {
+        private static readonly Random Random = new Random();
+
         private readonly RabbitServer _server;
 
         public FakeModel(RabbitServer server)
@@ -198,6 +201,17 @@ namespace RabbitMQ.Fakes
 
         public QueueDeclareOk QueueDeclare(string queue, bool durable, bool exclusive, bool autoDelete, IDictionary<string, object> arguments)
         {
+            if (string.IsNullOrWhiteSpace(queue))
+            {
+                var bytes = new byte[16];
+                Random.NextBytes(bytes);
+                var firstPart = Convert.ToBase64String(bytes).Substring(0, 11);
+                Random.NextBytes(bytes);
+                var secondPart = Convert.ToBase64String(bytes).Substring(0, 10);
+
+                queue = $"amq.gen-{firstPart}-{secondPart}";
+            }
+
             var queueInstance = new Queue
             {
                 Name = queue,
